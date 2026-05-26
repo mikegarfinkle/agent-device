@@ -699,6 +699,7 @@ export type BatchStep = {
   command: string;
   positionals?: string[];
   flags?: Record<string, unknown>;
+  runtime?: unknown;
 };
 
 export type BatchRunOptions = AgentDeviceRequestOverrides & {
