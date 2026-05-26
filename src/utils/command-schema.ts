@@ -8,6 +8,7 @@ import {
   SCREENSHOT_SPECIFIC_FLAG_DEFINITIONS,
   type ScreenshotRequestFlags,
 } from '../commands/capture-screenshot-options.ts';
+import type { CliCommandName } from '../command-catalog.ts';
 
 export type CliFlags = RemoteConfigMetroOptions &
   ScreenshotRequestFlags & {
@@ -1481,7 +1482,7 @@ export const GLOBAL_FLAG_KEYS = new Set<FlagKey>([
   'noRecord',
 ]);
 
-const COMMAND_SCHEMAS: Record<string, CommandSchema> = {
+const COMMAND_SCHEMAS: Record<CliCommandName, CommandSchema> = {
   boot: {
     helpDescription: 'Ensure target device/simulator is booted and ready',
     summary: 'Boot target device/simulator',
@@ -1944,6 +1945,8 @@ const COMMAND_SCHEMAS: Record<string, CommandSchema> = {
   },
 };
 
+const COMMAND_SCHEMA_MAP: Readonly<Record<string, CommandSchema>> = COMMAND_SCHEMAS;
+
 const flagDefinitionByName = new Map<string, FlagDefinition>();
 const flagDefinitionsByKey = new Map<FlagKey, FlagDefinition[]>();
 for (const definition of FLAG_DEFINITIONS) {
@@ -1965,7 +1968,7 @@ export function getFlagDefinitions(): readonly FlagDefinition[] {
 
 export function getCommandSchema(command: string | null): CommandSchema | undefined {
   if (!command) return undefined;
-  return COMMAND_SCHEMAS[command];
+  return COMMAND_SCHEMA_MAP[command];
 }
 
 export function applyCommandDefaults(
@@ -2044,7 +2047,7 @@ CLI to control iOS and Android devices for AI agents.
 `;
 
   const commands = getCliCommandNames().map((name) => {
-    const schema = COMMAND_SCHEMAS[name];
+    const schema = COMMAND_SCHEMA_MAP[name];
     if (!schema) throw new Error(`Missing command schema for ${name}`);
     return { name, schema, usage: buildCommandListUsage(name, schema) };
   });
